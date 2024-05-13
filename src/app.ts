@@ -124,7 +124,7 @@ app.post("/stations", async (req: Request, res: Response) => {
 
 	const station = req.body;
 	const stationId = stations[stations.length - 1] ? stations[stations.length - 1].id + 1 : 1;
-	const newStation = { ...station, id: stationId };
+	const newStation = { id: stationId, ...station };
 
 	stations.push(newStation);
 	writeFile(stations);
