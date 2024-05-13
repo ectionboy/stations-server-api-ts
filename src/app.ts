@@ -133,17 +133,22 @@ app.post("/stations", async (req: Request, res: Response) => {
 });
 
 app.delete("/stations/:id", async (req: Request, res: Response) => {
-    let stations = await readFile();
+	let stations = await readFile();
 
-	stations = stations.filter((st: Station) => st.id === parseInt(req.params.id));
+	const index = stations.findIndex((st: Station) => st.id === parseInt(req.params.id));
+	if (index === -1) {
+		res.status(404).send("Station not found");
+		return null;
+	}
+	stations.splice(index, 1);
+
 	writeFile(stations);
-
 
 	res.send("Station " + req.params.id + " has deleted");
 });
 
 app.put("/stations/:id", async (req: Request, res: Response) => {
-    let stations = await readFile();
+	let stations = await readFile();
 
 	const index = stations.findIndex((st: Station) => st.id === parseInt(req.params.id));
 	stations[index] = {
@@ -151,13 +156,13 @@ app.put("/stations/:id", async (req: Request, res: Response) => {
 		...req.body,
 	};
 
-    writeFile(stations);
+	writeFile(stations);
 
 	res.send(stations[index]);
 });
 
 app.get("/stations/:id/metrics", async (req: Request, res: Response) => {
-    let stations = await readFile();
+	let stations = await readFile();
 
 	const station: Station | undefined = stations.find(
 		(st: Station) => st.id === parseInt(req.params.id)
